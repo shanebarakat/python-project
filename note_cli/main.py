@@ -14,6 +14,7 @@ app = typer.Typer(rich_markup_mode="markdown")
 db_session = next(crud.get_db())
 
 def get_note_or_exit(note_id: int):
+    """Retrieve a note by ID or exit if not found."""
     note = crud.get_note_by_id(db_session, note_id)
     if not note:
         display.console.print(f"[error_style]Note {note_id} not found.[/error_style]")

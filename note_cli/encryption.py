@@ -1,3 +1,4 @@
+
 import base64
 import os
 from cryptography.fernet import Fernet, InvalidToken
@@ -23,6 +24,7 @@ def generate_salt() -> bytes:
 
 class Encryptor:
     def __init__(self, password: str):
+        """Initialize the Encryptor with a password."""
         self.password = password
 
     def encrypt(self, plaintext: str) -> bytes:

@@ -1,3 +1,4 @@
+
 import datetime
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean, LargeBinary, ForeignKey
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
@@ -40,4 +41,5 @@ class Template(Base):
     content = Column(Text, nullable=False)
 
 def init_db():
+    """Initialize the database by creating all tables."""
     Base.metadata.create_all(bind=engine) 

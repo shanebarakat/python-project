@@ -1,3 +1,5 @@
+"""
+Module for displaying notes and related information.
 
 from rich.console import Console
 from rich.table import Table
@@ -69,11 +71,15 @@ def display_note_details(note: database.Note, content: str):
 
 def display_stats(stats: dict):
     """Display application statistics."""
+    strings = [
+        f"[bold {settings.theme.id_style}]Active Notes:[/bold {settings.theme.id_style}] {stats['total_notes']}\n",
+        f"[bold {settings.theme.date_style}]Archived Notes:[/bold {settings.theme.date_style}] {stats['total_archived']}\n",
+        f"[bold {settings.theme.error_style}]In Trash:[/bold {settings.theme.error_style}] {stats['total_trashed']}\n",
+        f"[bold {settings.theme.tag_style}]Unique Tags:[/bold {settings.theme.tag_style}] {stats['total_tags']}"
+    ]
+    text = ''.join(strings)
     panel = Panel(
-        f"[bold {settings.theme.id_style}]Active Notes:[/bold {settings.theme.id_style}] {stats['total_notes']}\n"
-        f"[bold {settings.theme.date_style}]Archived Notes:[/bold {settings.theme.date_style}] {stats['total_archived']}\n"
-        f"[bold {settings.theme.error_style}]In Trash:[/bold {settings.theme.error_style}] {stats['total_trashed']}\n"
-        f"[bold {settings.theme.tag_style}]Unique Tags:[/bold {settings.theme.tag_style}] {stats['total_tags']}",
+        text,
         title="Application Stats",
         border_style=settings.theme.panel_border_style
     )
@@ -112,4 +118,4 @@ def display_templates(templates: list[database.Template]):
 
 def get_password() -> str:
     """Securely prompt for a password."""
-    return Prompt.ask("[bold yellow]Enter your master password[/bold yellow]", password=True) 
+    return Prompt.ask("[bold yellow]Enter your master password[/bold yellow]", password=True)
