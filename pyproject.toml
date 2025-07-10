@@ -3,36 +3,24 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "python-project"
-version = "0.0.1"
-authors = [
-  { name="First Last", email="you@example.com" },
-]
-description = "A comprehensive Python project."
+name = "note-cli"
+version = "0.2.0"
+description = "A comprehensive, encrypted, command-line note-taking application with versioning."
 readme = "README.md"
 requires-python = ">=3.8"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
 dependencies = [
     "typer[all]",
+    "SQLAlchemy",
+    "rich",
+    "cryptography",
+    "pydantic",
 ]
 
 [project.scripts]
-note = "python_project.main:app"
-
-[project.urls]
-"Homepage" = "https://github.com/pypa/sampleproject"
-"Bug Tracker" = "https://github.com/pypa/sampleproject/issues"
+note = "note_cli.main:app"
 
 [project.optional-dependencies]
-dev = [
-    "pytest",
-    "pytest-cov",
-    "ruff",
-]
+dev = ["pytest"]
 
 [tool.ruff]
 line-length = 88

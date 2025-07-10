@@ -1,74 +1,63 @@
-# Python Project
+# Note-CLI: A Comprehensive, Encrypted, Command-Line Note-Taking App
 
-This is a comprehensive Python project that provides a simple note-taking command-line application.
+Note-CLI is a professional-grade, feature-packed note-taking application that runs entirely in your terminal. It's designed for developers, writers, and anyone who values security, efficiency, and extensive customizability in their workflow. All your notes are encrypted at rest, ensuring your data remains private.
 
-## Features
+## ✨ Core Features
 
-*   **CLI Application**: A note-taking app built with `typer`.
-*   **Modern Packaging**: Uses `pyproject.toml` and `hatch` for building.
-*   **Structured Code**: Follows a `src` layout with separated logic, database, and configuration.
-*   **Testing**: Includes a test suite with `pytest` and coverage reporting.
-*   **Linting and Formatting**: Enforced with `ruff`.
-*   **Automation**: A `Makefile` provides commands for common development tasks.
+-   **End-to-End Encryption**: Note content is encrypted with a key derived from your master password using strong cryptographic standards (`PBKDF2HMAC` and `AES`).
+-   **Interactive Editing**: Edit notes in your default system editor (`$EDITOR`) for a seamless writing experience.
+-   **Rich and Themed Interface**: A beautiful terminal UI powered by `rich`, with customizable color themes.
+-   **Note Revisions**: Every edit creates a version history. View and restore previous versions of any note.
+-   **Note Templates**: Create and manage templates to quickly bootstrap new notes with predefined content.
+-   **Note Pinning & Archiving**: Pin important notes, and archive others to hide them from the main view without deleting them.
+-   **Tagging and Filtering**: Organize your notes with tags and filter your note list by any tag.
+-   **Powerful Search**: Instantly search across note titles, content, and tags (requires password for decryption).
+-   **Safe Deletes with a Trash Can**: Deleted notes go to a trash can, where you can list, restore, or permanently empty them.
+-   **Configuration File**: Customize the app via a simple `.ini` file located at `~/.note-cli/config.ini`.
+-   **Persistent Storage**: Notes are saved in a local SQLite database.
 
-## Getting Started
+## 🚀 Installation
 
-### Prerequisites
+1.  **Clone the repository:** `git clone <repository-url> && cd note-cli-project`
+2.  **Install the application:** `pip install -e .`
 
-*   Python 3.8+
-*   `make`
+The first time you run a command, the application will automatically create a configuration file and a database in `~/.note-cli/`.
 
-### Installation
+## 🔐 A Note on Security
 
-1.  **Clone the repository:**
-    ```sh
-    git clone <repository-url>
-    cd python-project
-    ```
+On the first command that requires encryption or decryption (like `add`, `show`, `edit`, `search`), you will be prompted for a master password. This password is used to generate the encryption key for the current session. It is **never stored**.
 
-2.  **Create the virtual environment and install dependencies:**
-    This command will create a `.venv` directory, activate it, and install all the necessary packages defined in `pyproject.toml`.
-    ```sh
-    make install
-    ```
+**If you forget your password, your notes cannot be recovered.**
 
 ## Usage
 
-The application is a command-line tool for taking notes. You can run it using the `make run` command, which is a shortcut for activating the virtual environment and running the `note` script.
+### Core Note Commands
+-   **`note`**: List all active (non-archived) notes.
+-   **`note add --title "..."`**: Add a new note. You'll be prompted for tags and content.
+-   **`note add --template <name>`**: Create a new note from a template.
+-   **`note show <ID>`**: Decrypt and display a single note.
+-   **`note edit <ID>`**: Decrypt and open a note in your default editor. Saving will create a new revision.
+-   **`note update <ID> --title "..." --tags "..."`**: Update a note's title and/or tags.
+-   **`note delete <ID>`**: Move a note to the trash.
+-   **`note search <query>`**: Search through encrypted notes.
+-   **`note pin <ID>`**: Pin or unpin a note.
+-   **`note archive <ID>`**: Archive or unarchive a note.
+-   **`note list --archived`**: View a list of your archived notes.
 
-### Commands
+### Revision Management
+-   **`note revision list <NOTE_ID>`**: View the revision history for a note.
+-   **`note revision restore <REVISION_ID>`**: Restore a note to a previous version. The current version will be saved as a new revision.
 
-*   **`add`**: Add a new note.
-    ```sh
-    make run -- add "My first note"
-    ```
+### Template Management
+-   **`note template list`**: List all available templates.
+-   **`note template add <name>`**: Create a new template by opening your text editor.
+-   **`note template delete <name>`**: Delete a template.
 
-*   **`list`**: List all existing notes.
-    ```sh
-    make run -- list
-    ```
+### Trash Management
+-   **`note trash list`**: View all notes in the trash.
+-   **`note trash restore <ID>`**: Restore a note from the trash.
+-   **`note trash empty`**: Permanently delete all notes in the trash.
 
-*   **`clear`**: Clear all notes. You will be prompted for confirmation.
-    ```sh
-    make run -- clear
-    ```
-    To bypass the confirmation prompt, use the `--force` flag:
-    ```sh
-    make run -- clear --force
-    ```
-
-## Development
-
-### Running Tests
-
-To run the test suite, use the `test` command. This will execute all tests in the `tests/` directory and generate a coverage report.
-```sh
-make test
-```
-
-### Linting and Formatting
-
-To check for code quality and format the code according to the project style, use the `lint` command.
-```sh
-make lint
-``` 
+### Utilities
+-   **`note stats`**: Show application statistics.
+-   **`note config set <section>.<key> <value>`**: (Coming soon) A way to edit the config from the CLI. For now, edit `~/.note-cli/config.ini` directly. 
