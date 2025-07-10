@@ -3,30 +3,32 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "note-cli"
-version = "0.2.0"
-description = "A comprehensive, encrypted, command-line note-taking application with versioning."
+name = "flask-commerce"
+version = "0.1.0"
+description = "A massive, modular, full-stack e-commerce platform in Python."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
+
 dependencies = [
-    "typer[all]",
-    "SQLAlchemy",
-    "rich",
-    "cryptography",
-    "pydantic",
+    "Flask>=2.3.0",
+    "Flask-SQLAlchemy>=3.0.0",
+    "Flask-Migrate>=4.0.0",  # For Alembic database migrations
+    "Flask-Admin>=1.6.0",
+    "Flask-RESTx>=0.5.0",
+    "Flask-WTF>=1.1.0",      # For web forms
+    "Flask-Login>=0.6.0",    # For user session management
+    "email_validator>=2.0.0",# Required by Flask-WTF for email validation
+    "python-dotenv>=1.0.0",  # For managing environment variables
+    "Werkzeug>=2.3.0",       # Pinning to ensure compatibility
+    "SQLAlchemy>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-flask>=1.2.0",
+    "faker>=18.0.0", # For generating test data
 ]
 
 [project.scripts]
-note = "note_cli.main:app"
-
-[project.optional-dependencies]
-dev = ["pytest"]
-
-[tool.ruff]
-line-length = 88
-
-[tool.ruff.lint]
-select = ["E", "F", "I"]
-
-[tool.ruff.format]
-quote-style = "double" 
+manage = "manage:cli" 

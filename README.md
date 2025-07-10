@@ -1,63 +1,114 @@
-# Note-CLI: A Comprehensive, Encrypted, Command-Line Note-Taking App
+# Flask-Commerce: A Modular E-commerce Platform
 
-Note-CLI is a professional-grade, feature-packed note-taking application that runs entirely in your terminal. It's designed for developers, writers, and anyone who values security, efficiency, and extensive customizability in their workflow. All your notes are encrypted at rest, ensuring your data remains private.
+This is a comprehensive, full-stack e-commerce platform built with Python and Flask. It serves as a large-scale example application demonstrating best practices for building modular and scalable web applications. The project includes a customer-facing storefront, a powerful admin dashboard, and a complete REST API.
 
-## ✨ Core Features
+## Core Features
 
--   **End-to-End Encryption**: Note content is encrypted with a key derived from your master password using strong cryptographic standards (`PBKDF2HMAC` and `AES`).
--   **Interactive Editing**: Edit notes in your default system editor (`$EDITOR`) for a seamless writing experience.
--   **Rich and Themed Interface**: A beautiful terminal UI powered by `rich`, with customizable color themes.
--   **Note Revisions**: Every edit creates a version history. View and restore previous versions of any note.
--   **Note Templates**: Create and manage templates to quickly bootstrap new notes with predefined content.
--   **Note Pinning & Archiving**: Pin important notes, and archive others to hide them from the main view without deleting them.
--   **Tagging and Filtering**: Organize your notes with tags and filter your note list by any tag.
--   **Powerful Search**: Instantly search across note titles, content, and tags (requires password for decryption).
--   **Safe Deletes with a Trash Can**: Deleted notes go to a trash can, where you can list, restore, or permanently empty them.
--   **Configuration File**: Customize the app via a simple `.ini` file located at `~/.note-cli/config.ini`.
--   **Persistent Storage**: Notes are saved in a local SQLite database.
+-   **Modular Architecture**: The application is organized into blueprints (`main`, `auth`, `api`), making it easy to manage and scale.
+-   **Full-Featured Admin Dashboard**: A comprehensive admin interface built with Flask-Admin for managing users, products, categories, and orders.
+-   **Complete Authentication System**: User registration, login/logout, and session management using Flask-Login.
+-   **Product Catalog**: A complete system for managing products and categories.
+-   **REST API**: A versioned REST API built with Flask-RESTx for programmatic access to resources (WIP).
+-   **Database Management**: Uses Flask-SQLAlchemy for database interaction and Flask-Migrate (Alembic) for handling database schema migrations.
+-   **Environment-Based Configuration**: The application uses a robust configuration system to adapt to different environments (development, testing, production).
 
-## 🚀 Installation
+## Project Structure
 
-1.  **Clone the repository:** `git clone <repository-url> && cd note-cli-project`
-2.  **Install the application:** `pip install -e .`
+```
+.
+├── migrations/         # Database migration scripts
+├── src/
+│   └── app/
+│       ├── admin.py        # Flask-Admin setup
+│       ├── models.py       # SQLAlchemy database models
+│       ├── config.py       # Environment-specific configuration
+│       ├── __init__.py     # Application factory
+│       ├── main/           # Main public blueprint (homepage, products)
+│       │   ├── __init__.py
+│       │   ├── views.py
+│       │   └── ...
+│       ├── auth/           # Authentication blueprint
+│       │   ├── __init__.py
+│       │   ├── views.py
+│       │   └── forms.py
+│       ├── api/            # REST API blueprint (WIP)
+│       └── templates/      # Jinja2 templates
+│           ├── base.html
+│           ├── main/
+│           └── auth/
+├── tests/              # Application tests (WIP)
+├── .env                # Environment variables (local development)
+├── manage.py           # CLI for running and managing the app
+└── pyproject.toml      # Project dependencies and metadata
+```
 
-The first time you run a command, the application will automatically create a configuration file and a database in `~/.note-cli/`.
+## Getting Started
 
-## 🔐 A Note on Security
+### Prerequisites
 
-On the first command that requires encryption or decryption (like `add`, `show`, `edit`, `search`), you will be prompted for a master password. This password is used to generate the encryption key for the current session. It is **never stored**.
+-   Python 3.9+
+-   `pip` and `venv`
 
-**If you forget your password, your notes cannot be recovered.**
+### Installation and Setup
 
-## Usage
+1.  **Clone the repository:**
+    ```sh
+    git clone <repository-url>
+    cd flask-commerce-project
+    ```
 
-### Core Note Commands
--   **`note`**: List all active (non-archived) notes.
--   **`note add --title "..."`**: Add a new note. You'll be prompted for tags and content.
--   **`note add --template <name>`**: Create a new note from a template.
--   **`note show <ID>`**: Decrypt and display a single note.
--   **`note edit <ID>`**: Decrypt and open a note in your default editor. Saving will create a new revision.
--   **`note update <ID> --title "..." --tags "..."`**: Update a note's title and/or tags.
--   **`note delete <ID>`**: Move a note to the trash.
--   **`note search <query>`**: Search through encrypted notes.
--   **`note pin <ID>`**: Pin or unpin a note.
--   **`note archive <ID>`**: Archive or unarchive a note.
--   **`note list --archived`**: View a list of your archived notes.
+2.  **Create and activate a virtual environment:**
+    ```sh
+    python -m venv venv
+    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    ```
 
-### Revision Management
--   **`note revision list <NOTE_ID>`**: View the revision history for a note.
--   **`note revision restore <REVISION_ID>`**: Restore a note to a previous version. The current version will be saved as a new revision.
+3.  **Install dependencies:**
+    The application and all its dependencies are defined in `pyproject.toml`.
+    ```sh
+    pip install -e .
+    ```
 
-### Template Management
--   **`note template list`**: List all available templates.
--   **`note template add <name>`**: Create a new template by opening your text editor.
--   **`note template delete <name>`**: Delete a template.
+4.  **Create a `.env` file:**
+    Copy the `.env.example` (or create a new `.env` file) and set your own `SECRET_KEY`.
+    ```
+    FLASK_APP=manage.py
+    FLASK_ENV=development
+    SECRET_KEY='your-super-secret-key'
+    DATABASE_URL="sqlite:///dev.db"
+    ```
 
-### Trash Management
--   **`note trash list`**: View all notes in the trash.
--   **`note trash restore <ID>`**: Restore a note from the trash.
--   **`note trash empty`**: Permanently delete all notes in the trash.
+5.  **Initialize the database:**
+    This will create the database file and apply the initial schema.
+    ```sh
+    flask db init  # Run this only the very first time
+    flask db migrate -m "Initial migration"
+    flask db upgrade
+    ```
 
-### Utilities
--   **`note stats`**: Show application statistics.
--   **`note config set <section>.<key> <value>`**: (Coming soon) A way to edit the config from the CLI. For now, edit `~/.note-cli/config.ini` directly. 
+6.  **Seed the database with an admin user:**
+    This will create an admin user so you can access the admin dashboard.
+    ```sh
+    flask seed_db
+    ```
+    Default admin credentials: `admin` / `admin@example.com` / `admin`
+
+### Running the Application
+
+-   **Run the development server:**
+    ```sh
+    flask run
+    ```
+    The application will be available at `http://127.0.0.1:5000`.
+-   **Access the Admin Dashboard:**
+    Navigate to `http://127.0.0.1:5000/admin` and log in with the admin credentials.
+
+## What's Next?
+
+This is a foundational build. The next steps to expand this massive project would be:
+
+-   Building out the **Shopping Cart** functionality.
+-   Implementing the **Order Processing** workflow.
+-   Developing the **REST API** with endpoints for all resources.
+-   Writing a comprehensive **Test Suite**.
+-   Adding more complex features like **product reviews**, **payment gateway integration**, and **background tasks**. 
