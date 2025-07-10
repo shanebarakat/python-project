@@ -1,3 +1,4 @@
+
 import typer
 import json
 from typing_extensions import Annotated
@@ -11,6 +12,13 @@ state = {"encryptor": None}
 # --- Main App ---
 app = typer.Typer(rich_markup_mode="markdown")
 db_session = next(crud.get_db())
+
+def get_note_or_exit(note_id: int):
+    note = crud.get_note_by_id(db_session, note_id)
+    if not note:
+        display.console.print(f"[error_style]Note {note_id} not found.[/error_style]")
+        raise typer.Exit(1)
+    return note
 
 def get_encryptor():
     """Lazily initialize and return a session-wide encryptor."""
@@ -58,7 +66,7 @@ def add(
             display.console.print(":stop_sign: [yellow]Note creation cancelled.[/yellow]")
             raise typer.Exit()
             
-    tag_list = [tag.strip() for tag in tags.split(",") if tag.strip()]
+    tag_list = (tag.strip() for tag in tags.split(",") if tag.strip())
     note = crud.add_note(db_session, title, final_content, tag_list, get_encryptor())
     display.console.print(f":sparkles: [success_style]Note '[/success_style]{note.title}[success_style]' added successfully![/success_style]")
 
@@ -74,10 +82,7 @@ def list_notes(
 @app.command()
 def show(note_id: int):
     """Show the full decrypted content of a single note."""
-    note = crud.get_note_by_id(db_session, note_id)
-    if not note:
-        display.console.print(f"[error_style]Note {note_id} not found.[/error_style]")
-        raise typer.Exit(1)
+    note = get_note_or_exit(note_id)
     try:
         decrypted_content = get_encryptor().decrypt(note.encrypted_content)
         display.display_note_details(note, decrypted_content)
@@ -87,10 +92,7 @@ def show(note_id: int):
 @app.command()
 def edit(note_id: int):
     """Edit a note's content using the default system editor."""
-    note = crud.get_note_by_id(db_session, note_id)
-    if not note:
-        display.console.print(f"[error_style]Note {note_id} not found.[/error_style]")
-        raise typer.Exit(1)
+    note = get_note_or_exit(note_id)
     
     try:
         decrypted_content = get_encryptor().decrypt(note.encrypted_content)
@@ -109,10 +111,7 @@ def update(note_id: int, title: str, tags: str):
     """Update a note's title and/or tags."""
     # This is a simplified version. A more robust one would fetch note first.
     # To update content, use 'edit'
-    note = crud.get_note_by_id(db_session, note_id)
-    if not note:
-        display.console.print(f"[error_style]Note {note_id} not found.[/error_style]")
-        raise typer.Exit(1)
+    note = get_note_or_exit(note_id)
     
     decrypted_content = get_encryptor().decrypt(note.encrypted_content) # Keep existing content
     updated_note = crud.update_note(db_session, note_id, title, decrypted_content, tags.split(','), get_encryptor())
@@ -151,13 +150,16 @@ app.add_typer(trash_app, name="trash")
 # ... (trash commands are simple and don't need significant changes)
 @trash_app.command(name="list")
 def list_trash():
+    """List all trashed notes."""
     notes = crud.get_trashed_notes(db_session)
     display.display_note_table(notes, title="Trash")
 @trash_app.command()
 def restore(note_id: int):
+    """Restore a trashed note."""
     crud.restore_note(db_session, note_id)
 @trash_app.command()
 def empty():
+    """Empty the trash."""
     crud.empty_trash(db_session)
 
 # --- Revision Sub-App ---
