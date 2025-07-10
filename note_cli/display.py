@@ -1,3 +1,4 @@
+
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -25,11 +26,13 @@ def display_note_table(notes: list[database.Note], title="Your Notes"):
     table.add_column("Last Updated", style=settings.theme.date_style)
 
     for note in notes:
-        status_icon = ""
+        icons = []
         if note.is_pinned:
-            status_icon += "📌"
+            icons.append("📌")
         if note.is_archived:
-            status_icon += "🗄️"
+            icons.append("🗄️")
+        
+        status_icon = ''.join(icons)
         
         table.add_row(
             str(note.id),
